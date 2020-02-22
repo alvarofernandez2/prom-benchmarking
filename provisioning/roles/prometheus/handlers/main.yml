@@ -1,0 +1,14 @@
+---
+- name: Start prometheus service
+  systemd:
+    name: prometheus
+    state: restarted
+    daemon_reload: yes
+    enabled: yes
+
+- name: Start alertmanager service
+  systemd:
+    name: alertmanager
+    state: restarted
+    daemon_reload: yes
+    enabled: yes

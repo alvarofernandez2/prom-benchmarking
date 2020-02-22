@@ -1,0 +1,12 @@
+[Unit]
+Description=Prometheus
+
+[Service]
+Restart=always
+RestartSec=5
+User={{ prometheus_user }}
+Group={{ prometheus_group }}
+ExecStart=/opt/prometheus-{{ prometheus_version }}.{{ prometheus_arch }}/prometheus --config.file=/opt/prometheus-{{ prometheus_version }}.{{ prometheus_arch }}/prometheus.yml --storage.tsdb.path=/opt/prometheus-{{ prometheus_version }}.{{ prometheus_arch }}/data --web.enable-admin-api --storage.tsdb.retention.time=6h --web.enable-lifecycle
+
+[Install]
+WantedBy=multi-user.target

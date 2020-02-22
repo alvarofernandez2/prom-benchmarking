@@ -1,0 +1,10 @@
+---
+prometheus_version: "2.15.2"
+prometheus_arch: "linux-amd64"
+prometheus_wget_url: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.{{ prometheus_arch }}.tar.gz"
+prometheus_user: "prometheus"
+prometheus_group: "prometheus"
+
+alertmanager_version: "0.20.0"
+alertmanager_arch: "linux-amd64"
+alertmanager_wget_url: "https://github.com/prometheus/alertmanager/releases/download/v{{ alertmanager_version }}/alertmanager-{{ alertmanager_version }}.{{ alertmanager_arch }}.tar.gz"

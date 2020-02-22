@@ -1,0 +1,36 @@
+---
+- hosts: all
+  become: yes
+  max_fail_percentage: 0
+  roles:
+    - common
+
+- hosts: all
+  become: yes
+  max_fail_percentage: 0
+  roles:
+    - node-exporter
+
+- hosts: metrics
+  become: yes
+  max_fail_percentage: 0
+  roles:
+    - prometheus
+
+- hosts: prom1
+  become: yes
+  max_fail_percentage: 0
+  roles:
+    - grafana
+
+- hosts: avalanche
+  become: yes
+  max_fail_percentage: 0
+  roles:
+    - avalanche
+
+#- hosts: all
+#  become: yes
+#  max_fail_percentage: 0
+#  roles:
+#    - clean

@@ -1,0 +1,10 @@
+[Unit]
+Description=Node Exporter
+
+[Service]
+User={{ node_exporter_user }}
+Group={{ node_exporter_user }}
+ExecStart=/opt/node_exporter-{{ node_exporter_version }}.{{ node_exporter_arch }}/node_exporter --collector.systemd
+
+[Install]
+WantedBy=multi-user.target

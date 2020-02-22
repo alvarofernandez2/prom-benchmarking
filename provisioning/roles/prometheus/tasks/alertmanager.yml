@@ -1,0 +1,43 @@
+---
+- name: Get alertmanager
+  get_url:
+    url: "{{ alertmanager_wget_url }}"
+    dest: /tmp
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_group }}"
+    mode: 0664
+  register: get_alertmanager
+  until:
+    - get_alertmanager.status_code is defined
+    - get_alertmanager.status_code == 200
+  retries: 10
+  delay: 1
+
+- name: Unzip alertmanager
+  unarchive:
+    src: "/tmp/alertmanager-{{ alertmanager_version }}.{{ alertmanager_arch }}.tar.gz"
+    dest: "/opt"
+    remote_src: yes
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_group }}"
+  notify: Start alertmanager service
+
+- name: Render alertmanager service unit template
+  template:
+    src: alertmanager.service.j2
+    dest: /etc/systemd/system/alertmanager.service
+    owner: root
+    group: root
+    mode: 0664
+  notify: Start alertmanager service
+
+# Default alertmanager config file
+
+#- name: Render alertmanager configuration file
+#  template:
+#    src: alertmanager.yml.j2
+#    dest: /opt/alertmanager-{{ alertmanager_version }}.{{ alertmanager_arch }}/alertmanager.yml
+#    owner: "{{ prometheus_user }}"
+#    group: "{{ prometheus_group }}"
+#    mode: 0664
+#  notify: Start alertmanager service

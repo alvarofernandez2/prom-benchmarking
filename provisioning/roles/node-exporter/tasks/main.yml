@@ -1,0 +1,43 @@
+---
+- name: Create group node_exporter
+  group:
+    name: "{{ node_exporter_group }}"
+    state: present
+
+- name: Create user node_exporter
+  user:
+    name: "{{ node_exporter_user }}"
+    shell: /sbin/nologin
+    group: "{{ node_exporter_group }}"
+
+- name: Get node_exporter
+  get_url:
+    url: "{{ node_exporter_wget_url }}"
+    dest: /tmp
+    owner: "{{ node_exporter_user }}"
+    group: "{{ node_exporter_group }}"
+    mode: 0664
+  register: get_node_exporter
+  until:
+    - get_node_exporter.status_code is defined
+    - get_node_exporter.status_code == 200
+  retries: 10
+  delay: 1
+
+- name: Unzip node_exporter
+  unarchive:
+    src: "/tmp/node_exporter-{{ node_exporter_version }}.{{ node_exporter_arch }}.tar.gz"
+    dest: "/opt"
+    remote_src: yes
+    owner: "{{ node_exporter_user }}"
+    group: "{{ node_exporter_group }}"
+  notify: Start node_exporter service
+
+- name: Render node_exporter service unit template
+  template:
+    src: node_exporter.service.j2
+    dest: /etc/systemd/system/node_exporter.service
+    owner: root
+    group: root
+    mode: 0664
+  notify: Start node_exporter service

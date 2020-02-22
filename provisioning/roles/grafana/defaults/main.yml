@@ -1,0 +1,9 @@
+---
+grafana_version: "0.18.1"
+grafana_arch: "linux-amd64"
+grafana_wget_url: "https://github.com/prometheus/grafana/releases/download/v{{ grafana_version }}/grafana-{{ grafana_version }}.{{ grafana_arch }}.tar.gz"
+grafana_user: "grafana"
+grafana_group: "grafana"
+
+grafana_datasources_dir: "/etc/grafana/provisioning/datasources"
+grafana_dashboards_dir: "/etc/grafana/provisioning/dashboards"

@@ -1,0 +1,32 @@
+---
+- name: Pull avalanche image
+  docker_image:
+    name: '{{ avalanche_image }}'
+    source: pull
+
+- name: Run one avalanche (no churn 5000)
+  docker_container:
+    name: avalanche-test-5000-no-churn
+    image: '{{ avalanche_image }}'
+    state: started
+    command: ["--series-interval=31557600", "--metric-interval=31557600"]
+    ports:
+      - "{{ avalanche_port1 }}:{{ avalanche_port }}"
+
+- name: Run one avalanche (no churn 50000)
+  docker_container:
+    name: avalanche-test-50000-no-churn
+    image: '{{ avalanche_image }}'
+    state: started
+    command: ["--series-interval=31557600", "--metric-interval=31557600", "--metric-count=5000"]
+    ports:
+      - "{{ avalanche_port2 }}:{{ avalanche_port }}"
+
+- name: Run one avalanche (no churn 100000)
+  docker_container:
+    name: avalanche-test-100000-no-churn
+    image: '{{ avalanche_image }}'
+    state: started
+    command: ["--series-interval=31557600", "--metric-interval=31557600", "--metric-count=10000"]
+    ports:
+      - "{{ avalanche_port3 }}:{{ avalanche_port }}"

@@ -1,0 +1,28 @@
+---
+- name: Delete common temp files
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "/tmp/node_exporter-{{ node_exporter_version }}.{{ node_exporter_arch }}.tar.gz"
+    - "/tmp/cadvisor"
+
+- name: Delete temp files in services machine
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "/tmp/consul_{{ consul_version }}_{{ consul_arch }}.zip"
+    - "/tmp/vault_{{ vault_version }}_{{ vault_arch }}.zip"
+  when:
+    - inventory_hostname == 'services'
+
+- name: Delete temp files in metrics machine
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "/tmp/prometheus-{{ prometheus_version }}.{{ prometheus_arch }}.tar.gz"
+    - "/tmp/alertmanager-{{ alertmanager_version }}.{{ alertmanager_arch }}.tar.gz"
+  when:
+    - inventory_hostname == 'metrics'

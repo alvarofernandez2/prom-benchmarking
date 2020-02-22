@@ -1,0 +1,38 @@
+---
+- name: Copy Grafana YUM repo
+  copy:
+    src: grafana.repo
+    dest: /etc/yum.repos.d/grafana.repo
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Install Grafana via YUM
+  yum:
+    name:
+      - grafana
+    state: latest
+  notify: Start grafana service
+
+- name: Render grafana datasource template
+  template:
+    src: "datasources/{{ item }}.j2"
+    dest: "{{ grafana_datasources_dir }}/{{ item }}"
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+    mode: 0664
+  with_items:
+    - prometheis.yml
+  notify: Start grafana service
+
+- name: Copy grafana dashboards files
+  copy:
+    src: "dashboards/{{ item }}"
+    dest: "{{ grafana_dashboards_dir }}/{{ item }}"
+    owner: "{{ grafana_user }}"
+    group: "{{ grafana_group }}"
+    mode: 0664
+  with_items:
+    - dashboards.yml
+    - prometheus.json
+  notify: Start grafana service

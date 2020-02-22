@@ -1,0 +1,52 @@
+---
+- name: Create group prometheus
+  group:
+    name: "{{ prometheus_group }}"
+    state: present
+
+- name: Create user prometheus
+  user:
+    name: "{{ prometheus_user }}"
+    shell: /sbin/nologin
+    group: "{{ prometheus_group }}"
+
+- name: Get prometheus
+  get_url:
+    url: "{{ prometheus_wget_url }}"
+    dest: /tmp
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_group }}"
+    mode: 0664
+  register: get_prometheus
+  until:
+    - get_prometheus.status_code is defined
+    - get_prometheus.status_code == 200
+  retries: 10
+  delay: 1
+
+- name: Unzip prometheus
+  unarchive:
+    src: "/tmp/prometheus-{{ prometheus_version }}.{{ prometheus_arch }}.tar.gz"
+    dest: "/opt"
+    remote_src: yes
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_group }}"
+  notify: Start prometheus service
+
+- name: Render prometheus service unit template
+  template:
+    src: prometheus.service.j2
+    dest: /etc/systemd/system/prometheus.service
+    owner: root
+    group: root
+    mode: 0664
+  notify: Start prometheus service
+
+- name: Render prometheus configuration file
+  template:
+    src: prometheus.yml.j2
+    dest: /opt/prometheus-{{ prometheus_version }}.{{ prometheus_arch }}/prometheus.yml
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_group }}"
+    mode: 0664
+  notify: Start prometheus service

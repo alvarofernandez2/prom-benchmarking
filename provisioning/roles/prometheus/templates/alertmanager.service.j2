@@ -1,0 +1,12 @@
+[Unit]
+Description=Alertmanager
+
+[Service]
+Restart=always
+RestartSec=5
+User={{ prometheus_user }}
+Group={{ prometheus_group }}
+ExecStart=/opt/alertmanager-{{ alertmanager_version }}.{{ alertmanager_arch }}/alertmanager --config.file=/opt/alertmanager-{{ alertmanager_version }}.{{ alertmanager_arch }}/alertmanager.yml --storage.path=/opt/alertmanager-{{ alertmanager_version }}.{{ alertmanager_arch }}/data
+
+[Install]
+WantedBy=multi-user.target

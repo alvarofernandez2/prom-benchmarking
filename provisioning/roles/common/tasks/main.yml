@@ -1,0 +1,35 @@
+---
+- name: Disabling SELinux (anti-pattern)
+  selinux:
+    policy: targeted
+    state: permissive
+
+- name: Effective disabling of SELinux (avoiting reboot)
+  command: /usr/sbin/setenforce 0
+
+- name: install epel-release
+  yum:
+    name:
+      - epel-release
+    state: latest
+
+- name: install packages
+  yum:
+    name:
+      - vim
+      - wget
+      - unzip
+      - jq
+      - python-pip
+    state: latest
+
+- name: install docker
+  yum:
+    name:
+      - docker
+    state: latest
+  notify: Start docker
+
+- name: Install docker python module with pip
+  pip:
+    name: docker
